@@ -5,9 +5,19 @@
 using namespace cv;
 using namespace std;
 
-Mat image, imgHSV, imgThresholded, threshold_output;
+Mat image, imgHSV;
+Mat imgThresholded, threshold_output;
+Mat linPolar, grayImage;
+Mat grayImage_canny1, grayImage_canny2;
+Mat OutputAbsDiff;
+
 int thresh = 100;
 int max_thresh = 255;
+
+int ratio = 3;
+int kernel_size = 3;
+int const lowThreshold = 0;
+int const max_lowThreshold = 100;
 
 void thresh_callback(int, void* )
 {
@@ -53,12 +63,36 @@ void thresh_callback(int, void* )
   // combine roi & mask:
   Mat eye_cropped = roi & mask;
 
-  Mat hasil;
-  linearPolar(eye_cropped, hasil, Point2f(eye_cropped.size().height/2, eye_cropped.size().width/2), radius[0]+150, CV_WARP_FILL_OUTLIERS);
+  // process linear polar
+  linearPolar(eye_cropped, linPolar, Point2f(eye_cropped.size().height/2, eye_cropped.size().width/2), radius[0]+150, CV_WARP_FILL_OUTLIERS);
+
+  // convert to grayscale
+  cvtColor(linPolar, grayImage, CV_BGR2GRAY);
+
+  // edge detection
+  Canny(grayImage, grayImage_canny1, 50, 150, kernel_size);
+
+  // edge detection
+  Canny(grayImage, grayImage_canny2, lowThreshold, lowThreshold * ratio, kernel_size);
+
+  // Absdiff
+  absdiff(grayImage_canny1, grayImage_canny2, OutputAbsDiff);
 
   // Show in a window
-  namedWindow("Contours", CV_WINDOW_AUTOSIZE);
-  imshow("Contours", hasil);
+  namedWindow("Linear Polar", CV_WINDOW_AUTOSIZE);
+  imshow("Linear Polar", linPolar);
+
+  // Show in a window
+  namedWindow("Canny 1", CV_WINDOW_AUTOSIZE);
+  imshow("Canny 1", grayImage_canny1);
+
+  // Show in a window
+  namedWindow("Canny 2", CV_WINDOW_AUTOSIZE);
+  imshow("Canny 2", grayImage_canny2);
+
+  // Show in a window
+  namedWindow("Output", CV_WINDOW_AUTOSIZE);
+  imshow("Output", OutputAbsDiff);
 }
 
 int main(int argc, char** argv)
