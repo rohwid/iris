@@ -16,8 +16,35 @@ int max_thresh = 255;
 
 int ratio = 3;
 int kernel_size = 3;
-int const lowThreshold = 0;
+int lowThreshold;
 int const max_lowThreshold = 100;
+
+void CannyThreshold(int, void*)
+{
+  // convert to grayscale
+  cvtColor(linPolar, grayImage, CV_BGR2GRAY);
+
+  // edge detection
+  Canny(grayImage, grayImage_canny1, 50, 150, kernel_size);
+
+  // edge detection
+  Canny(grayImage, grayImage_canny2, lowThreshold, lowThreshold * ratio, kernel_size);
+
+  // Absdiff
+  absdiff(grayImage_canny1, grayImage_canny2, OutputAbsDiff);
+
+  // Show in a window
+  namedWindow("Canny 1", CV_WINDOW_AUTOSIZE);
+  imshow("Canny 1", grayImage_canny1);
+
+  // Show in a window
+  namedWindow("Canny 2", CV_WINDOW_AUTOSIZE);
+  imshow("Canny 2", grayImage_canny2);
+
+  // Show in a window
+  namedWindow("Output", CV_WINDOW_AUTOSIZE);
+  imshow("Output", OutputAbsDiff);
+}
 
 void thresh_callback(int, void* )
 {
@@ -66,34 +93,24 @@ void thresh_callback(int, void* )
   // process linear polar
   linearPolar(eye_cropped, linPolar, Point2f(eye_cropped.size().height/2, eye_cropped.size().width/2), radius[0]+150, CV_WARP_FILL_OUTLIERS);
 
-  // convert to grayscale
-  cvtColor(linPolar, grayImage, CV_BGR2GRAY);
+  // Create a window
+  namedWindow("Canny Threshold", CV_WINDOW_AUTOSIZE );
 
-  // edge detection
-  Canny(grayImage, grayImage_canny1, 50, 150, kernel_size);
+  // Create a Trackbar for user to enter threshold
+  createTrackbar("Min Threshold:", "Canny Threshold", &lowThreshold, max_lowThreshold, CannyThreshold);
 
-  // edge detection
-  Canny(grayImage, grayImage_canny2, lowThreshold, lowThreshold * ratio, kernel_size);
+  // Show the image
+  CannyThreshold(0, 0);
 
-  // Absdiff
-  absdiff(grayImage_canny1, grayImage_canny2, OutputAbsDiff);
+  // Show in a window
+  namedWindow("Original Image", CV_WINDOW_AUTOSIZE);
+  imshow("Original Image", image);
 
   // Show in a window
   namedWindow("Linear Polar", CV_WINDOW_AUTOSIZE);
   imshow("Linear Polar", linPolar);
-
-  // Show in a window
-  namedWindow("Canny 1", CV_WINDOW_AUTOSIZE);
-  imshow("Canny 1", grayImage_canny1);
-
-  // Show in a window
-  namedWindow("Canny 2", CV_WINDOW_AUTOSIZE);
-  imshow("Canny 2", grayImage_canny2);
-
-  // Show in a window
-  namedWindow("Output", CV_WINDOW_AUTOSIZE);
-  imshow("Output", OutputAbsDiff);
 }
+
 
 int main(int argc, char** argv)
 {
