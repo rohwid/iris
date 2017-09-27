@@ -42,8 +42,8 @@ void CannyThreshold(int, void*)
   imshow("Canny 2", grayImage_canny2);
 
   // Show in a window
-  namedWindow("Output", CV_WINDOW_AUTOSIZE);
-  imshow("Output", OutputAbsDiff);
+  namedWindow("Absolute Difference", CV_WINDOW_AUTOSIZE);
+  imshow("Absolute Difference", OutputAbsDiff);
 }
 
 void thresh_callback(int, void* )
@@ -76,6 +76,7 @@ void thresh_callback(int, void* )
 
   circle(image, center[0], (int)radius[0] + 150, color, 2, 8, 0);
 
+  //
   Rect r(center[0].x - (radius[0] + 150), center[0].y - (radius[0] + 150), (radius[0] + 150) * 2, (radius[0]+150) * 2);
 
   // obtain the image ROI:
@@ -91,13 +92,11 @@ void thresh_callback(int, void* )
   Mat eye_cropped = roi & mask;
 
   // process linear polar
-  linearPolar(eye_cropped, linPolar, Point2f(eye_cropped.size().height/2, eye_cropped.size().width/2), radius[0]+150, CV_WARP_FILL_OUTLIERS);
-
-  // Create a window
-  namedWindow("Canny Threshold", CV_WINDOW_AUTOSIZE );
+  linearPolar(eye_cropped, linPolar, Point2f(eye_cropped.size().height / 2, eye_cropped.size().width / 2), radius[0] + 150, CV_WARP_FILL_OUTLIERS);
 
   // Create a Trackbar for user to enter threshold
-  createTrackbar("Min Threshold:", "Canny Threshold", &lowThreshold, max_lowThreshold, CannyThreshold);
+  namedWindow("Canny 2", CV_WINDOW_AUTOSIZE );
+  createTrackbar("Min Threshold:", "Canny 2", &lowThreshold, max_lowThreshold, CannyThreshold);
 
   // Show the image
   CannyThreshold(0, 0);
@@ -105,6 +104,10 @@ void thresh_callback(int, void* )
   // Show in a window
   namedWindow("Original Image", CV_WINDOW_AUTOSIZE);
   imshow("Original Image", image);
+
+  // Show in a window
+  //namedWindow("Original Image Thresholded", CV_WINDOW_AUTOSIZE);
+  //imshow("Original Image Thresholded", imgThresholded);
 
   // Show in a window
   namedWindow("Linear Polar", CV_WINDOW_AUTOSIZE);
@@ -133,19 +136,19 @@ int main(int argc, char** argv)
   int iHighV = 5;
 
   // Create a window called "Control"
-  namedWindow("Controller", CV_WINDOW_AUTOSIZE);
+  namedWindow("Original Image", CV_WINDOW_AUTOSIZE);
 
   // Trackbars - Hue (0 - 179)
-  createTrackbar("LowH", "Controller", &iLowH, 179, thresh_callback);
-  createTrackbar("HighH", "Controller", &iHighH, 179, thresh_callback);
+  createTrackbar("LowH", "Original Image", &iLowH, 179, thresh_callback);
+  createTrackbar("HighH", "Original Image", &iHighH, 179, thresh_callback);
 
   // Trackbars - Saturation (0 - 255)
-  createTrackbar("LowS", "Controller", &iLowS, 255, thresh_callback);
-  createTrackbar("HighS", "Controller", &iHighS, 255, thresh_callback);
+  createTrackbar("LowS", "Original Image", &iLowS, 255, thresh_callback);
+  createTrackbar("HighS", "Original Image", &iHighS, 255, thresh_callback);
 
   // Trackbars - Value (0 - 255)
-  createTrackbar("LowV", "Controller", &iLowV, 255, thresh_callback);
-  createTrackbar("HighV", "Controller", &iHighV, 255, thresh_callback);
+  createTrackbar("LowV", "Original Image", &iLowV, 255, thresh_callback);
+  createTrackbar("HighV", "Original Image", &iHighV, 255, thresh_callback);
 
   while (true)
   {
@@ -159,7 +162,7 @@ int main(int argc, char** argv)
     erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
     dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
-    //morphological closing (fill small holes in the foreground)
+    // morphological closing (fill small holes in the foreground)
     dilate(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
     erode(imgThresholded, imgThresholded, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 
