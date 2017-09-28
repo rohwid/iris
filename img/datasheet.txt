@@ -1,0 +1,9 @@
+iris_500_1
+----------
+- iHighV = 5
+- Radius = 150
+
+iris_500_2
+----------
+- iHighV = 11
+- Radius = 180

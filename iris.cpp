@@ -76,7 +76,6 @@ void thresh_callback(int, void* )
 
   circle(image, center[0], (int)radius[0] + 150, color, 2, 8, 0);
 
-  //
   Rect r(center[0].x - (radius[0] + 150), center[0].y - (radius[0] + 150), (radius[0] + 150) * 2, (radius[0]+150) * 2);
 
   // obtain the image ROI:
@@ -102,12 +101,12 @@ void thresh_callback(int, void* )
   CannyThreshold(0, 0);
 
   // Show in a window
-  namedWindow("Original Image", CV_WINDOW_AUTOSIZE);
-  imshow("Original Image", image);
+  //namedWindow("Main", CV_WINDOW_AUTOSIZE);
+  //imshow("Main", imgThresholded);
 
   // Show in a window
-  //namedWindow("Original Image Thresholded", CV_WINDOW_AUTOSIZE);
-  //imshow("Original Image Thresholded", imgThresholded);
+  namedWindow("Main", CV_WINDOW_AUTOSIZE);
+  imshow("Main", image);
 
   // Show in a window
   namedWindow("Linear Polar", CV_WINDOW_AUTOSIZE);
@@ -117,7 +116,7 @@ void thresh_callback(int, void* )
 
 int main(int argc, char** argv)
 {
-  image = imread("img/iris_500.png");
+  image = imread("img/iris_500_1.png");
 
   // If not success, exit program
   if (!image.data)
@@ -136,19 +135,19 @@ int main(int argc, char** argv)
   int iHighV = 5;
 
   // Create a window called "Control"
-  namedWindow("Original Image", CV_WINDOW_AUTOSIZE);
+  namedWindow("Main", CV_WINDOW_AUTOSIZE);
 
   // Trackbars - Hue (0 - 179)
-  createTrackbar("LowH", "Original Image", &iLowH, 179, thresh_callback);
-  createTrackbar("HighH", "Original Image", &iHighH, 179, thresh_callback);
+  createTrackbar("LowH", "Main", &iLowH, 179, thresh_callback);
+  createTrackbar("HighH", "Main", &iHighH, 179, thresh_callback);
 
   // Trackbars - Saturation (0 - 255)
-  createTrackbar("LowS", "Original Image", &iLowS, 255, thresh_callback);
-  createTrackbar("HighS", "Original Image", &iHighS, 255, thresh_callback);
+  createTrackbar("LowS", "Main", &iLowS, 255, thresh_callback);
+  createTrackbar("HighS", "Main", &iHighS, 255, thresh_callback);
 
   // Trackbars - Value (0 - 255)
-  createTrackbar("LowV", "Original Image", &iLowV, 255, thresh_callback);
-  createTrackbar("HighV", "Original Image", &iHighV, 255, thresh_callback);
+  createTrackbar("LowV", "Main", &iLowV, 255, thresh_callback);
+  createTrackbar("HighV", "Main", &iHighV, 255, thresh_callback);
 
   while (true)
   {
